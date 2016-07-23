@@ -6,16 +6,20 @@ import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
+import android.os.Handler;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.view.animation.Transformation;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.foxity.tc.foxity.pojo.GridViewDataPojo;
 import com.foxity.tc.foxity.R;
@@ -30,7 +34,6 @@ public class GridViewAdapter extends ArrayAdapter<GridViewDataPojo> {
 
         int resourceId;
         Context context;
-        AnimatorSet set ;
         ArrayList<GridViewDataPojo> dataArrayList;
 
         public GridViewAdapter(Context context, int resource, ArrayList<GridViewDataPojo> object) {
@@ -41,7 +44,7 @@ public class GridViewAdapter extends ArrayAdapter<GridViewDataPojo> {
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, final View convertView, ViewGroup parent) {
 
             final ViewHolder holder;
             View row = convertView;
@@ -54,24 +57,19 @@ public class GridViewAdapter extends ArrayAdapter<GridViewDataPojo> {
                 holder.text = (TextView) row.findViewById(R.id.textViewId);
                 holder.linearLayoutItem = (LinearLayout) row.findViewById(R.id.linearLayoutId);
                 row.setTag(holder);
-            }else{
+            }
+            else{
                 holder=(ViewHolder)row.getTag();
             }
 
-
             holder.text.setText(dataArrayList.get(position).getText());
             holder.linearLayoutItem.setBackgroundColor(dataArrayList.get(position).getColor());
-
-
-            Animation rotateAnim = AnimationUtils.loadAnimation(context, R.anim.rotate);
-            LayoutAnimationController animController = new LayoutAnimationController(rotateAnim, 0);
-            holder.linearLayoutItem.setLayoutAnimation(animController);
 
             Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
             Point size = new Point();
             display.getSize(size);
             int width = size.x;
-            width = width / 3;
+            width = width / 4;
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, width);
             holder.linearLayoutItem.setLayoutParams(params);
 
@@ -79,42 +77,33 @@ public class GridViewAdapter extends ArrayAdapter<GridViewDataPojo> {
                 @Override
                 public void onClick(View view) {
 
-                    set = (AnimatorSet) AnimatorInflater.loadAnimator(context,R.animator.flip);
-                    set.setTarget(holder.linearLayoutItem);
-                    set.start();
-                    set.addListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animator) {
 
-                        }
+                    final ViewPropertyAnimator viewPropertyAnimator= holder.linearLayoutItem.animate();
+                    viewPropertyAnimator.setDuration(500);
+                    viewPropertyAnimator.rotationY(90);
 
-                        @Override
-                        public void onAnimationEnd(Animator animator) {
-                            dataArrayList.remove(position);
-                            notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animator) {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animator) {
-
-                        }
-                    });
-
-
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    viewPropertyAnimator.setDuration(0);
+                                    viewPropertyAnimator.rotationY(-90);
+                                    dataArrayList.remove(position);
+                                    notifyDataSetChanged();
+                                }
+                            }, 500);
                 }});
 
-
             return row;
+
             }
+
+
 
     class ViewHolder {
          TextView text;
          LinearLayout linearLayoutItem;
     }
+
 
 }

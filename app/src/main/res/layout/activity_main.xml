@@ -2,11 +2,23 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="30dp"
+    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:text="Foxity"
+        android:textSize="20sp"
+        android:paddingBottom="20dp"
+        android:gravity="center"
+        android:layout_height="wrap_content" />
 
     <GridView
         android:layout_width="match_parent"
         android:numColumns="3"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
         android:id="@+id/gridViewId"
         android:layout_height="wrap_content">
 

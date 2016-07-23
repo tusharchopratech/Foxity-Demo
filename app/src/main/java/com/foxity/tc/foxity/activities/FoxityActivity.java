@@ -40,7 +40,6 @@ public class FoxityActivity extends AppCompatActivity {
         gridViewAdapter = new GridViewAdapter(FoxityActivity.this,R.layout.inflate_gridview, dataArrayList);
         gridView.setAdapter(gridViewAdapter);
 
-
     }
 
 
